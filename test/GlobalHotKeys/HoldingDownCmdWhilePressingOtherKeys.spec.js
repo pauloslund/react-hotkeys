@@ -12,6 +12,54 @@ describe('Holding down Cmd while pressing other keys:', function () {
     configure({allowCombinationSubmatches: false });
   });
 
+  describe('and there are not actions with combinations that involve Cmd', function() {
+    beforeEach(function () {
+      this.keyMap = {
+        ACTION1: "a",
+        ACTION2: "shift+b",
+      };
+
+      this.handler1 = sinon.spy();
+      this.handler2 = sinon.spy();
+
+
+      const handlers = {
+        ACTION1: this.handler1,
+        ACTION2: this.handler2,
+      };
+
+      this.reactDiv = document.createElement("div");
+      document.body.appendChild(this.reactDiv);
+
+      this.wrapper = mount(
+        <GlobalHotKeys keyMap={this.keyMap} handlers={handlers}>
+          <div className="childElement" />
+        </GlobalHotKeys>,
+        { attachTo: this.reactDiv }
+      );
+    });
+
+    afterEach(function() {
+      document.body.removeChild(this.reactDiv);
+    });
+
+    it('does not trigger unwanted events', function () {
+      simulant.fire(this.reactDiv, "keydown", { key: KeyCode.COMMAND });
+      simulant.fire(this.reactDiv, "keypress", { key: KeyCode.A });
+
+      expect(this.handler1).not.to.have.been.called;
+
+      simulant.fire(this.reactDiv, "keydown", { key: KeyCode.SHIFT });
+      simulant.fire(this.reactDiv, "keypress", { key: KeyCode.B });
+
+      expect(this.handler2).not.to.have.been.called;
+
+      simulant.fire(this.reactDiv, 'keyup', { key: KeyCode.COMMAND });
+      simulant.fire(this.reactDiv, 'keyup', { key: KeyCode.SHIFT });
+
+    });
+  });
+
   [true, false].forEach((allowCombinationSubmatches) => {
     describe(`when allowCombinationSubmatches is ${allowCombinationSubmatches}`, () => {
       before(function(){

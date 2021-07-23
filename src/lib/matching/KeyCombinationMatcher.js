@@ -207,8 +207,9 @@ function canBeMatched(keyCombination, combinationMatcher) {
   const combinationKeysNo = size(combinationMatcher.keyDictionary);
 
   const iterator = new KeyCombinationIterator(keyCombination);
+  const cmdIsHidingKeys = (combinationMatcher.keyDictionary.Meta && keyUpIsBeingHidden(keyCombination))
 
-  if (Configuration.option('allowCombinationSubmatches') || keyUpIsBeingHidden(keyCombination)) {
+  if (Configuration.option('allowCombinationSubmatches') || cmdIsHidingKeys) {
     return iterator.numberOfKeys >= combinationKeysNo;
   } else {
     /**
