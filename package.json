@@ -69,6 +69,7 @@
     "react": ">= 0.14.0"
   },
   "scripts": {
+    "postinstall": "npm run prepublish",
     "lint": "eslint .",
     "tests": "mocha",
     "watch-tests": "mocha --watch",
